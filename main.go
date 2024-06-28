@@ -22,12 +22,11 @@ var Db *sql.DB
 
 func InitDB() {
 	connectionString := fmt.Sprintf("user=%s password=%s host=%s port=%d dbname=%s sslmode=disable", user, password, host, port, dbname)
-	Db, err := sql.Open("postgres", connectionString)
+	var err error
+	Db, err = sql.Open("postgres", connectionString)
 	if err != nil {
 		log.Fatalf("check the connection string: %v", err)
 	}
-
-	defer Db.Close()
 
 	if err := Db.Ping(); err != nil {
 		log.Fatalf("unable to connect to the database : %v", err)
@@ -110,7 +109,7 @@ func ReadAllBlogs() ([]map[string]interface{}, error) {
 
 // Update Blog
 func UpdateBlog(id int, title, content string) error {
-	query := `UPDATE blogs SET title=$1, content=$2 updated_at=NOW() WHERE blogid=$4`
+	query := `UPDATE blogs SET title=$1, content=$2, updated_at=NOW() WHERE blogid=$4`
 
 	_, err := Db.Exec(query, title, content, id)
 	return err
@@ -128,4 +127,12 @@ func DeleteBlog(id int) error {
 func main() {
 	InitDB()
 	defer Db.Close()
+
+	// Creating an author
+	autherId, err := CreateAuthor("user1", "user123")
+	if err != nil {
+		log.Fatalf("error while creating author: %v", err)
+	}
+	fmt.Printf("New author created with ID: %d", autherId)
+
 }
