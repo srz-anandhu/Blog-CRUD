@@ -162,6 +162,7 @@ func main() {
 	}
 	fmt.Println("Blogs: ", blogs)
 
+	// Update a Blog
 	if err := UpdateBlog(7, "updated Title", "this is updated content"); err != nil {
 		log.Fatalf("error while updating a blog : %v", err)
 	}
